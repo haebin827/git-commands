@@ -1,6 +1,6 @@
 # GIT COMMANDS
 
-This repository is created to test git commands
+This repository is a playground to test git commands
 
 ![img.png](images/img.png)
 
@@ -53,7 +53,7 @@ This repository is created to test git commands
 #### git commit -m "[descriptive message]"
 - Commit your staged content as a new commit snapshot
 
-#### git restore --staged .
+#### git restore --staged [file-name / .]
 - 실수로 전체 커밋해버린 경우 되돌리기
 ---
 
@@ -112,7 +112,7 @@ This repository is created to test git commands
 - Show any object in Git in human-readable format
 
 ---
-
+로컬에 commit만 하는 경우에는 쉽게 reset 기능으로 처리할 수 있지만, 원격 저장소까지 push가 된 경우엔 revert를 사용한다.
 ### Share & Update
 
 #### git remote add [alias] [url]
