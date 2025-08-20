@@ -2,6 +2,7 @@
 
 - [Git Flags](./GIT_FLAG.md)
 - [Git Commands Combinations](./GIT_COMMAND_COMBINATION.md)
+- [Git Safe Commands](./GIT_SAFE_COMMAND.md)
 
 ![img.png](images/img.png)
 ## 1. 기본 개념
