@@ -1,171 +1,145 @@
-# GIT COMMANDS
-
-This repository is a playground to test git commands
-
+# Git 명령어 정리
 ![img.png](images/img.png)
+## 1. 기본 개념
 
-1. 작업 폴더(Working Directory)
-   - 작업이 일어나는 폴더
+- **작업 폴더(Working Directory)**  
+  실제로 파일을 수정하고 개발하는 공간
 
-2. Staging Area(Index)
-   - 작업 폴더에서 작업한 변경 내용을 기록 하는 곳 (git 저장소에 commit하기 전에 올려두는 공간)
-   - stage에서 commit을 하게 되면 git 저장소로 변경 내용이 저장됨
+- **스테이징 영역(Staging Area, Index)**  
+  변경된 내용을 임시로 올려서 "커밋할 준비"를 하는 공간  
+  (`git add`로 올리고, `git commit`으로 저장소에 반영)
 
-3. 로컬 저장소(local repository)
-   - 내 PC에서 관리하는 git 저장소
-   - 로컬 git 저장소를 만들어주려는 디렉토리로 이동해서 아래 명령어를 실행하면 .git 폴더 생성
+- **로컬 저장소(Local Repository)**  
+  내 PC에 있는 Git 저장소 (.git 폴더)
 
-4. 원격 저장소(remote repository)
-   - 로컬 저장소를 업로드 하는 곳. ex) GitHub, Bitbucket, GitLab 등
-   - clone 명령어로 기존 원격 저장소를 로컬에 받을 수 있음
-
----
-
-### Setup & Init
-
-#### git init
-- Initialize an existing directory as a Git repository
-
-#### git clone [url]
-- Retrieve an entire repository from a hosted location via URL
+- **원격 저장소(Remote Repository)**  
+  GitHub, GitLab, Bitbucket 같은 서버에 있는 저장소  
+  협업 시 이 원격 저장소를 사용해 코드 공유
 
 ---
 
-### Stage & Snapshot
+## 2. 초기 설정
 
-#### git status
-- Show modified files in working directory, staged for your next commit
-  - 커밋된 파일 & 스테이지에 있는 파일 : tracked
-  - 그 외 : untracked
-
-#### git add [file]
-- Add a file as it looks now to your next commit (stage)
-
-#### git reset [file]
-- Unstage a file while retaining the changes in working directory
-
-#### git diff
-- Diff of what is changed but not staged
-
-#### git diff -- staged
-- Diff of what is staged but not yet committed
-
-#### git commit -m "[descriptive message]"
-- Commit your staged content as a new commit snapshot
-
-#### git restore --staged [file-name / .]
-- 실수로 전체 커밋해버린 경우 되돌리기
----
-
-### Branch & Merge
-
-#### git branch
-- List your branches a will appear next to the currently active branch
-
-#### git branch [branch-name]
-- Create a new branch at the current commit
-
-#### git checkout
-- Switch to another branch and check it out into your working directory
-
-#### git checkout -M [curent-branch] [new-branch]
-- 무조건 덮어쓰기
-
-#### git checkout -b [new-branch]
-- 새 브랜치 만들고 즉시 체크아웃
-
-#### git cherry-pick [commit-name]
-- 커밋하지 않고 선택하여 합치기
-
-#### git cherry-pick -n [commit-name]
-- 브랜치의 이력을 다른 브랜치에 합치기
-
-#### git branch -d [branch-name]
-- 삭제할 브랜치가 현재 브랜치에 합쳐졌을 경우에만 삭제
-
-#### git branch -D [branch-name]
-- 삭제할 브랜치가 현재 브랜치에 합쳐지지 않았어도
-
-#### git push origin --delete <wrong-branch>
-- 원격 브랜치 삭제
-
-#### git merge [branch]
-- Merge the specified branch's history into the current one
-
-#### git log
-- Show all commits in the current branch's history
+```bash
+git init                   # 현재 디렉토리를 Git 저장소로 초기화
+git clone [url]            # 원격 저장소를 복제해서 가져오기
+```
 
 ---
 
-### Inspect & Compare
+## 3. 변경 사항 관리 (Stage & Commit)
 
-#### git log
-- Show the commit history for the currently active branch
-
-#### git log branchB..branchA
-- Show the commits on branchA that are not on branchB
-
-#### git log --follow [file]
-- Show the commits that changed file, even across renames
-
-#### git show [SHA]
-- Show any object in Git in human-readable format
-
----
-로컬에 commit만 하는 경우에는 쉽게 reset 기능으로 처리할 수 있지만, 원격 저장소까지 push가 된 경우엔 revert를 사용한다.
-### Share & Update
-
-#### git remote add [alias] [url]
-- Add a git URL as an alias
-- alias에는 주로 origin이 옮
-
-#### git fetch [alias]
-- Fetch down all the branches from that Git remote
-
-#### git merge [alias]/[branch]
-- merge a remote branch into your current branch to bring it up to date
-
-#### git push [alias] [branch]
-- Transmit local branch commits to the remote repository branch
-
-#### git pull
-- Fetch and merge any commits from the tracking remote branch
+```
+git status                 # 현재 상태 확인
+git add [파일명]            # 수정된 파일을 스테이징에 추가
+git reset [파일명]          # 스테이징에서 내리기 (수정은 남김)
+git diff                   # 수정됐지만 스테이징 안 된 내용 확인
+git diff --staged          # 스테이징된 변경 내용 확인
+git commit -m "메시지"      # 커밋 생성
+git restore --staged .      # 잘못 스테이징한 것 되돌리기
+```
 
 ---
 
-### Tracking Path Changes
+## 4. 브랜치 & 병합
 
-#### git rm [file]
-- Delete the file from project and stage the removal for commit
-
-#### git mv [existing-path] [new-path]
-- Change an existing file path and stage the move
-
-#### git log --stat -M
-- Show all commit logs with indication of any paths that moved
-
+```
+git branch                 # 브랜치 목록 확인
+git branch [이름]           # 새 브랜치 생성
+git checkout [이름]         # 브랜치 이동
+git checkout -b [이름]      # 브랜치 생성 후 이동
+git merge [브랜치명]        # 브랜치 병합
+git cherry-pick [커밋ID]    # 특정 커밋만 현재 브랜치에 반영
+git branch -d [이름]        # 병합된 브랜치 삭제
+git branch -D [이름]        # 강제 브랜치 삭제
+git push origin --delete 브랜치명   # 원격 브랜치 삭제
+```
 ---
 
-### Rewrite History
+## 5. 기록 & 비교
 
-#### git rebase [branch]
-- Apply any commits of current branch ahead of specified one
-
-#### git reset --hard [commit]
-- Clear staging area, rewrite working tree from specified commit
-
+```
+git log                          # 커밋 로그 확인
+git log --oneline --graph --all  # 한 줄 로그 + 브랜치 그래프 보기
+git log branchB..branchA         # A에는 있지만 B에는 없는 커밋 보기
+git log --follow [파일명]         # 파일의 변경 이력 확인
+git show [커밋ID]                # 특정 커밋 상세 보기
+git blame [파일명]               # 파일별 줄 단위 작성자/커밋 확인
+```
 ---
 
-### Temporary Commits
+## 6. 원격 저장소와 동기화
 
-#### git stash
-- Save modified and staged changes
+```
+git remote add origin [url]    # 원격 저장소 추가
+git fetch origin               # 원격 저장소 최신 이력 가져오기 (병합은 안 함)
+git merge origin/[브랜치]      # 원격 브랜치를 현재 브랜치에 병합
+git pull                       # 원격 변경 내용을 가져와 병합
+git push origin [브랜치]       # 로컬 커밋을 원격에 업로드
+```
+---
 
-#### git stash list
-- list stack-order of stashed file changes
+## 7. 파일 & 경로 관리
 
-#### git stash pop
-- Write working from top of stash stack
+```
+git rm [파일명]               # 파일 삭제 후 커밋
+git mv [이전경로] [새경로]     # 파일 이동 또는 이름 변경 후 스테이징
+git log --stat -M             # 파일 이동/이름 변경 포함 로그 보기
+```
+---
 
-#### git stash drop
-- Discard the changes from top of stash stack
+## 8. 기록 수정 & 되돌리기
+
+```
+git reset --hard [커밋ID]     # 특정 시점으로 완전히 되돌리기
+git revert [커밋ID]           # 되돌리는 새 커밋 생성 (push 후 안전)
+git rebase [브랜치]           # 현재 브랜치를 지정한 브랜치 위로 재배치
+```
+---
+
+## 9. 임시 저장 (stash)
+
+```
+git stash                     # 변경 사항 임시 저장
+git stash list                # stash 목록 확인
+git stash pop                 # 가장 최근 stash 적용 + 제거
+git stash drop                # stash에서 제거
+```
+---
+
+## 10. 실무에서 유용한 추가 명령어
+
+```
+git commit --amend            # 가장 최근 커밋 메시지 수정 (push 전만 사용)
+git push -f origin [브랜치]   # 강제로 push (주의!)
+git fetch -p                  # 원격에서 삭제된 브랜치 로컬에서도 정리
+git clean -fd                 # 추적되지 않은 파일/폴더 삭제
+git reflog                    # HEAD 이동 기록 보기 (reset, checkout 포함)
+git shortlog -sn              # 커밋한 사람별 통계 확인
+```
+---
+
+## 자주 쓰는 명령어 TOP 10 (실무 기준)
+
+```
+git status
+
+git add .
+
+git commit -m "메시지"
+
+git log --oneline --graph --all
+
+git checkout -b feature/기능명
+
+git merge 브랜치명
+
+git pull
+
+git push origin 브랜치명
+
+git stash / git stash pop
+
+git reset --hard [커밋ID] (push 전 실수 정정)
+```
+---
