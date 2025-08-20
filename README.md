@@ -36,7 +36,7 @@ git reset [파일명]          # 스테이징에서 내리기 (수정은 남김)
 git diff                   # 수정됐지만 스테이징 안 된 내용 확인
 git diff --staged          # 스테이징된 변경 내용 확인
 git commit -m "메시지"      # 커밋 생성
-git restore --staged .      # 잘못 스테이징한 것 되돌리기
+git restore --staged .      # 잘못 스테이징한 것 되돌리기 (특정 파일만 이전 커밋/브랜치 상태로 롤백)
 ```
 
 ---
@@ -91,9 +91,30 @@ git log --stat -M             # 파일 이동/이름 변경 포함 로그 보기
 ## 8. 기록 수정 & 되돌리기
 
 ```
-git reset --hard [커밋ID]     # 특정 시점으로 완전히 되돌리기
-git revert [커밋ID]           # 되돌리는 새 커밋 생성 (push 후 안전)
-git rebase [브랜치]           # 현재 브랜치를 지정한 브랜치 위로 재배치
+git reset --soft [커밋 ID]     # 커밋은 취소하지만, 스테이징 및 working directory 상태는 그대로 남겨두기 => “방금 커밋을 했는데 메시지만 바꾸고 싶어!”
+git reset --mixed [커밋 ID]     # 커밋도 취소하고, 스테이징도 풀어버리지만 파일 수정 내용은 working directory에 존재 => “커밋도 취소하고 add도 잘못했네. 하지만 내용은 살려야지.”
+git reset --hard [커밋ID]     # 커밋 취소 + 스테이징 취소 + working directory의 수정한 파일까지 전부 없애고 특정 시점으로 완전히 돌아가기 => “진짜 다 꼬였어. 그냥 어제 상태로 완전히 되돌려!”
+# 주의: 되돌린 내용은 reflog 없으면 못 찾음 → 반드시 신중히
+
+git revert [커밋ID]           # 이미 원격에 올린(공유된) 커밋을 안전하게 되돌릴 때 => push 후에 사용해도 안전!
+git rebase [브랜치]           # 현재 브랜치를 지정한 브랜치 위로 재배치 => 히스토리를 깔끔하게 직선으로 유지하고 싶을 때
+```
+
+#### git rebase [브랜치] 추가 예시
+- 상황: feature/login 작업 중인데, 팀이 main에 여러 커밋을 더 넣음. 내 브랜치를 최신 main 뒤에 “옮겨 적어” 충돌을 지금 해결하고, 나중 머지 충돌을 줄이고 싶다.
+```
+git checkout feature/login
+git fetch origin
+git rebase origin/main
+# 충돌 나면 파일 수정 → git add <파일들> → git rebase --continue 
+# 중단하려면 git rebase --abort
+git push --force-with-lease origin feature/login   # rebase 후엔 보통 필요
+```
+- 상황: 협업 중 “pull할 때마다 merge 커밋”이 생기는 게 싫다.
+```
+git config pull.rebase true
+# 또는 매번:
+git pull --rebase
 ```
 ---
 
@@ -114,7 +135,7 @@ git commit --amend            # 가장 최근 커밋 메시지 수정 (push 전�
 git push -f origin [브랜치]   # 강제로 push (주의!)
 git fetch -p                  # 원격에서 삭제된 브랜치 로컬에서도 정리
 git clean -fd                 # 추적되지 않은 파일/폴더 삭제
-git reflog                    # HEAD 이동 기록 보기 (reset, checkout 포함)
+git reflog                    # HEAD 이동 기록 보기 (reset, checkout 포함) => 예를 들어 커밋을 실수로 날려도 복구 가능
 git shortlog -sn              # 커밋한 사람별 통계 확인
 ```
 ---
