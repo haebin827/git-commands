@@ -66,6 +66,7 @@ git branch [이름]           # 새 브랜치 생성
 git checkout [이름]         # 브랜치 이동
 git checkout -b [이름]      # 브랜치 생성 후 이동
 git merge [브랜치명]        # 브랜치 병합
+git merge-base [브랜치명1] [브랜치명2]      # 두 브랜치의 공통 조상(commit hash)을 보여줌 => commit hash를 보여준다는게 핵심!
 git cherry-pick [커밋ID]    # 특정 커밋만 현재 브랜치에 반영
 git branch -d [이름]        # 안전 브랜치 삭제 => 해당 브랜치가 현재 브랜치(보통 main)로 병합된 경우에만 삭제
 git branch -D [이름]        # 강제 브랜치 삭제 => 병합 안 돼도 삭제. 실수로 작업 잃을 수 있어 주의
