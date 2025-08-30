@@ -162,8 +162,12 @@ git pull --rebase
 - git pull --rebase --autostash처럼 pull 직전에 자동 stash/pop 도 가능.
 ```
 git stash                     # 변경 사항 임시 저장
+git stash push [파일경로]    # 특정 변경 파일만 임시 저장
+git stash push -m "[메세지]" [파일 경로]    # 특정 변경 파일만 임시 저장 + 메세
 git stash list                # stash 목록 확인
 git stash pop                 # 가장 최근 stash 적용 + 제거
+git restore -s "stash@{[stash 번호]}" -- [파일 경로]    # 특정 파일만 복원
+# git checkout -s "stash@{[stash 번호]}" -- [파일 경로] 도 가능
 git stash drop                # stash에서 제거
 ```
 ---
