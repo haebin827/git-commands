@@ -91,6 +91,7 @@ git blame [파일명]               # 파일별 줄 단위 작성자/커밋 확�
 ```
 git remote add origin [url]    # 원격 저장소 추가
 git fetch origin               # 원격 저장소 최신 이력 가져오기 (병합은 안 함)
+git fetch --all                # 원격 브랜치 목록 업데이트
 git merge origin/[브랜치]      # 원격 브랜치를 현재 브랜치에 병합
 git pull                       # 원격 변경 내용을 가져와 병합
 git push origin [브랜치]       # 로컬 커밋을 원격에 업로드
