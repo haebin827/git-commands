@@ -29,7 +29,43 @@
 
 #### HEAD (현재 작업 중인 branch 라고 생각하면 편함)
 - 현재 체크아웃한 브랜치를 가리키는 포인터 (보통 refs/heads/<branch>), 또는 detached HEAD 상태에서는 바로 특정 커밋을 가리키는 포인터
+
 ---
+
+### origin, origin/브랜치, 브랜치 차이
+
+#### origin
+
+- Remote repository의 별칭(alias) => 보통 git clone을 하면 원격 저장소가 자동으로 origin이라는 이름으로 등록됨.
+- 단순히 서버 자체를 가리키는 이름일 뿐, 특정 커밋이나 브랜치를 뜻하지는 않음.
+
+```bash
+# 예를 들어, 아래 명령어로 현재 로컬 저장소에 등록된 원격 저장소(remote) 목록을 보면,
+# (-v 옵션은 verbose의 약자로, URL까지 함께 출력)
+
+git remote -v
+# origin  https://github.com/Blue-Screen-Solution/bss-checkin.git (fetch)
+# origin  https://github.com/Blue-Screen-Solution/bss-checkin.git (push)
+```
+
+#### origin/[브랜치명]
+
+- 리모트 트래킹 브랜치(remote-tracking branch).
+- 로컬에 저장된, 원격 브랜치의 마지막 fetch 시점 스냅샷 (ex. origin/develop은 원격 저장소의 develop 브랜치를 가리키는 포인터)
+- 로컬에서 git fetch 할 때 갱신됨
+- 직접 커밋할 수는 없고, 읽기 전용 포인터
+
+#### [브랜치명] (ex.: develop, feature/xxx)
+
+- 로컬 브랜치 (로컬 .git/refs/heads/에 저장된 포인터)
+- Working directory와 직접 연결되어 있고, 커밋하면 HEAD → 현재 브랜치 포인터가 앞으로 이동함
+- 보통 origin/브랜치를 기준으로 새 브랜치를 만듦:
+
+```bash
+git checkout -b feature/foo origin/develop
+```
+---
+
 
 ## 2. 초기 설정
 
@@ -64,7 +100,9 @@ git restore --staged .      # 잘못 스테이징한 것 되돌리기 (특정 �
 git branch                 # 브랜치 목록 확인
 git branch [이름]           # 새 브랜치 생성
 git checkout [이름]         # 브랜치 이동
-git checkout -b [이름]      # 브랜치 생성 후 이동
+git checkout -b [이름]      # 브랜치 생성 후 이동 => (새 브랜치) -> HEAD (현재 브랜치) 기준
+git checkout -b [이름] origin/master      # ‼️‼️‼️브랜치 생성 후 이동 => (새 브랜치) -> origin/master 기준
+
 git merge [브랜치명]        # 브랜치 병합
 git merge-base [브랜치명1] [브랜치명2]      # 두 브랜치의 공통 조상(commit hash)을 보여줌 => commit hash를 보여준다는게 핵심!
 git cherry-pick [커밋ID]    # 특정 커밋만 현재 브랜치에 반영
@@ -77,6 +115,13 @@ git push origin --delete 브랜치명   # 원격 브랜치 삭제
 ## 5. 기록 & 비교
 
 ```
+git rev-parse HEAD              # 현재 체크아웃된 커밋(= HEAD)의 정확한 SHA-1/2(해시)를 출력
+                                # 내가 지금 정확히 어떤 커밋을 가리키는지”를 확인. 로컬 HEAD와 원격 HEAD가 같은지 비교할 때 유용
+git ls-remote origin [브랜치명]  # 원격 저장소에 직접 접속해, 해당 ref가 가리키는 원격 커밋 해시를 보여줌
+                                  # “GitHub(원격)의 브랜치 HEAD가 정확히 어떤 커밋인지” 즉시 확인
+                                  # ‼️‼️‼️rev-parse HEAD와 여기 나온 해시가 같으면 로컬 HEAD == 원격 브랜치 HEAD
+git merge-base origin/[브랜치명] origin/[브랜치명2]  # 두 브랜치의 공통 조상(LCA: Lowest Common Ancestor) 커밋을 계산해서 그 베이스 커밋 해시를 출력.
+                                                      # ‼️‼️‼️ merge-base를 구해 두면 GitHub와 동일 관점의 누적 diff를 로컬에서도 재현할 수 있음!!!
 git log                          # 커밋 로그 확인
 git log --oneline --graph --all  # 한 줄 로그 + 브랜치 그래프 보기
 git log --oneline --decorate --graph # 한 줄 로그 + 이쁘게 보기 ㅎㅎ
@@ -102,7 +147,8 @@ git push --force-with-lease origin [브랜치]  # 원격 브랜치를 지금 로
 
 #### git fetch 추가 설명
 - git fetch는, remote의 새 commit/branch 정보를 로컬의 remote tracking branch(refs/remotes/origin/*)에만 업데이트함.
-- Working dir이나 local branch 내용은 안 바뀜! 이후 merge나 rebase로 로컬 브랜치에 통합해야 함.
+-   즉, fetch는 워킹 트리나 로컬 브랜치 내용은 건드리지 않음. 단지 “원격의 스냅샷”만 최신화.
+- Working dir이나 local branch 내용은 안 바뀜!!!! 이후 merge나 rebase로 로컬 브랜치에 통합해야 함.
 #### git pull = git fetch + git merge (기본).
 #### git config pull.rebase true면 fetch + rebase.
  
@@ -111,6 +157,8 @@ git push --force-with-lease origin [브랜치]  # 원격 브랜치를 지금 로
 ## 7. 파일 & 경로 관리
 
 ```
+git rev-parse --show-toplevel   # 현재 작업 중인 Git 저장소의 루트 디렉터리 경로를 출력
+                                # .git 디렉토리를 기준으로 최상위 경로를 계산해서 보여줌
 git rm [파일명]               # 파일 삭제 => 실제 파일 삭제 + 추적 제거. 추적만 끊고 파일은 남기려면 git rm --cached <file>
 git rm --cached [파일명]       # git 추적만 끊기 (파일은 dir에 남아있음)
 git rm -r [폴더명]            # 폴더 삭제 (-r는 recursive하게 폴더 내부의 내용을 다 삭제하라는 뜻)
