@@ -79,6 +79,7 @@ git push origin --delete 브랜치명   # 원격 브랜치 삭제
 ```
 git log                          # 커밋 로그 확인
 git log --oneline --graph --all  # 한 줄 로그 + 브랜치 그래프 보기
+git log --oneline --decorate --graph # 한 줄 로그 + 이쁘게 보기 ㅎㅎ
 git log branchB..branchA         # A에는 있지만 B에는 없는 커밋 보기
 git log --follow [파일명]         # 파일의 변경 이력 확인
 git show [커밋ID]                # 특정 커밋 상세 보기
@@ -95,6 +96,8 @@ git fetch --all                # 원격 브랜치 목록 업데이트
 git merge origin/[브랜치]      # 원격 브랜치를 현재 브랜치에 병합
 git pull                       # 원격 변경 내용을 가져와 병합
 git push origin [브랜치]       # 로컬 커밋을 원격에 업로드
+git push --force-with-lease origin [브랜치]  # 원격 브랜치를 지금 로컬 상태(= 되돌린 히스토리)로 강제 덮어씀
+# --force-with-lease는 누군가가 그 사이에 푸시했는지 안전 체크를 해줘서 --force보다 안전
 ```
 
 #### git fetch 추가 설명
